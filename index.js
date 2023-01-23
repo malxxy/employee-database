@@ -1,6 +1,6 @@
-const inquirer = require('inquirer'); // require inquirer
-const mysql = require('mysql'); // require sql
-const express = require('express'); // require express
+const inquirer = require('./node_modules/inquirer'); // require inquirer
+const mysql = require('./node_modules/mysql2'); // require sql
+const express = require('./node_modules/express'); // require express
 
 const PORT = process.env.PORT || 3001; // local host
 const app = express(); // launch express app
@@ -15,36 +15,26 @@ const con = mysql.createConnection({
   database: "employees.db"
 });
 
-con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  var employeesSQL = "CREATE TABLE department (id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,name VARCHAR(30) NOT NULL)";
-  con.query(employeesSQL, function (err, result) {
-    if (err) throw err;
-    console.log("Table created");
-  });
-});
-
-db.query('SELECT COUNT(id) AS total_count FROM favorite_books GROUP BY in_stock', function (err, results) {
-    console.log(results);
-    // count number of favorite books that are in stock and list IDs
-    // count id from total count and group by favorite books in stock
-    // querying database using count method and group by IN STOCK
-  });
+// db.query('SELECT COUNT(id) AS total_count FROM favorite_books GROUP BY in_stock', function (err, results) {
+//     console.log(results);
+//     // count number of favorite books that are in stock and list IDs
+//     // count id from total count and group by favorite books in stock
+//     // querying database using count method and group by IN STOCK
+//   });
   
-  db.query('SELECT SUM(quantity) AS total_in_section, MAX(quantity) AS max_quantity, MIN(quantity) AS min_quantity, AVG(quantity) AS avg_quantity FROM favorite_books GROUP BY section', function (err, results) {
-    console.log(results);
-    // sum quantity of favorite books in sections
-    // list max, min, and average
-  });
+//   db.query('SELECT SUM(quantity) AS total_in_section, MAX(quantity) AS max_quantity, MIN(quantity) AS min_quantity, AVG(quantity) AS avg_quantity FROM favorite_books GROUP BY section', function (err, results) {
+//     console.log(results);
+//     // sum quantity of favorite books in sections
+//     // list max, min, and average
+//   });
   
-  app.use((req, res) => {
-    res.status(404).end();
-  });
+//   app.use((req, res) => {
+//     res.status(404).end();
+//   });
   
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+//   app.listen(PORT, () => {
+//     console.log(`Server running on port ${PORT}`);
+//   });
 
 
 // Array of questions for user input

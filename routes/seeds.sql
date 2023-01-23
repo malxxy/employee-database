@@ -5,7 +5,7 @@ VALUES (1,"Information Technology"),
        (4,"Finance"),
        (5,"Marketing");
 
-INSERT INTO role (id,title,salary,department_id)
+INSERT INTO roles (id,title,salary,department_id)
 VALUES (1,"Business Analyst","$95,000"),
        (2,"Software Engineer","$120,000"),
        (3,"Recruiter","$70,000"),

@@ -1,6 +1,6 @@
 SELECT *
 FROM employee
-JOIN role ON employee.title = role.id;
+JOIN roles ON employee.title = role.id;
 
 -- SELECT *
 -- FROM course_names
