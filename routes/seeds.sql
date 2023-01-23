@@ -8,9 +8,9 @@ VALUES (1,"Information Technology"),
 INSERT INTO role (id,title,salary,department_id)
 VALUES (1,"Business Analyst","$95,000"),
        (2,"Software Engineer","$120,000"),
-       (3,"Recruiter","$60,000"),
+       (3,"Recruiter","$70,000"),
        (4,"Accountant","$99,000"),
-       (5,"Marketing Manager","$63,000");
+       (5,"Marketing Manager","$89,000");
 
 INSERT INTO employee (id,first_name,last_name,role_id,manager_id)
 VALUES (1,"Mark","Newman","0903","55"),
