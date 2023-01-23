@@ -1,7 +1,51 @@
-// TODO: Include packages needed for this application
-const inquirer = require('inquirer');
-const fs = require('fs');
-const path = require('path');
+const inquirer = require('inquirer'); // require inquirer
+const mysql = require('mysql'); // require sql
+const express = require('express'); // require express
+
+const PORT = process.env.PORT || 3001; // local host
+const app = express(); // launch express app
+
+app.use(express.urlencoded({ extended: false })); // middleware
+app.use(express.json()); // middleware
+
+const con = mysql.createConnection({
+  host: "127.0.0.1",
+  user: "root",
+  password: "codecode123",
+  database: "employees.db"
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+  var employeesSQL = "CREATE TABLE department (id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,name VARCHAR(30) NOT NULL)";
+  con.query(employeesSQL, function (err, result) {
+    if (err) throw err;
+    console.log("Table created");
+  });
+});
+
+db.query('SELECT COUNT(id) AS total_count FROM favorite_books GROUP BY in_stock', function (err, results) {
+    console.log(results);
+    // count number of favorite books that are in stock and list IDs
+    // count id from total count and group by favorite books in stock
+    // querying database using count method and group by IN STOCK
+  });
+  
+  db.query('SELECT SUM(quantity) AS total_in_section, MAX(quantity) AS max_quantity, MIN(quantity) AS min_quantity, AVG(quantity) AS avg_quantity FROM favorite_books GROUP BY section', function (err, results) {
+    console.log(results);
+    // sum quantity of favorite books in sections
+    // list max, min, and average
+  });
+  
+  app.use((req, res) => {
+    res.status(404).end();
+  });
+  
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+
 
 // Array of questions for user input
 const questions = [
@@ -21,8 +65,17 @@ const addDepartment = [
     }
 ]
 
-// addtoTable => {console.log('addtoTable')};
-
+departmentAdd => {
+    con.connect(function(err) {
+        if (err) throw err;
+        console.log("Connected!");
+        var addARow = `INSERT INTO department (id,name) VALUES (${addDepartment.input})`;
+        con.query(addARow, function (err, result) {
+          if (err) throw err;
+          console.log("Table created");
+        });
+      });
+}
 
 // If user selects this choice, then computer will show data or ask more questions
 function showResults(userChoice) {
@@ -34,7 +87,7 @@ function showResults(userChoice) {
         console.log('user chose to view all emplyes');
     } else if (userChoice.choices === 'add a department') {
         console.log('user chose to add a department');
-        // inquirer.prompt(addDepartment).then(addtoTable());
+        inquirer.prompt(addDepartment).then(addDepartment => departmentAdd());
     } else if (userChoice.choices === 'add a role') {
         console.log('user chose to add a role');
     } else if (userChoice.choices === 'add an employee') {
