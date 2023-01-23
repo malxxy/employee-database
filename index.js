@@ -46,6 +46,7 @@ function showResults(userChoice) {
         init();
     } else {
          console.log('Please chose an answer from the provided choices');
+         init();
         };
     };
 
