@@ -1,20 +1,20 @@
-INSERT INTO department (id,name)
-VALUES (1,"Information Technology"),
-       (2,"Engineering"),
-       (3,"HR"),
-       (4,"Finance"),
-       (5,"Marketing");
+INSERT INTO department (name)
+VALUES ("Information Technology"),
+       ("Engineering"),
+       ("HR"),
+       ("Finance"),
+       ("Marketing");
 
-INSERT INTO roles (id,title,salary,department_id)
-VALUES (1,"Business Analyst","$95,000"),
-       (2,"Software Engineer","$120,000"),
-       (3,"Recruiter","$70,000"),
-       (4,"Accountant","$99,000"),
-       (5,"Marketing Manager","$89,000");
+INSERT INTO roles (title,salary,department_id)
+VALUES ("Business Analyst",95000,4),
+       ("Software Engineer",120000,2),
+       ("Recruiter",70000,3),
+       ("Accountant",99000,4),
+       ("Marketing Manager",89000,5);
 
-INSERT INTO employee (id,first_name,last_name,role_id,manager_id)
-VALUES (1,"Mark","Newman","0903","55"),
-        (2,"Jane","Schilaro","0932","55"),
-        (3,"Trey","Cubane","0981","43"),
-        (4,"Justin","Smith","7803","39"),
-        (5,"Erin","Faine","0836","50");
+INSERT INTO employee (first_name,last_name,role_id,manager_id)
+VALUES ("Mark","Newman",1,null),
+        ("Jane","Schilaro",4,1),
+        ("Trey","Cubane",3,1),
+        ("Justin","Smith",2,null),
+        ("Erin","Faine",5,4);

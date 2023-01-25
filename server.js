@@ -43,22 +43,56 @@ const addDepartment = [
 ]
 
 departmentAdd = (userAnswer) => {
+    console.log(userAnswer);
     con.connect(function(err) {
         if (err) throw err;
         console.log("Connected!");
-        var addARow = `INSERT INTO department (id,name) VALUES (6, ${userAnswer.input})`;
-        con.query(addARow, function (err, result) {
+        con.query(`INSERT INTO department (name) VALUES (?)`,userAnswer.addDepart,function (err, result) {
             if (err) throw(err);
             console.log(result);
             console.info("Added a table row");
         });
       });
-}
+};
 
+const addRole = [
+    {
+        type: 'input',
+        message: 'What is the title of the role?',
+        name: 'addNewRole',
+    },
+    {
+        type: 'input',
+        message: 'What is the salary of the role?',
+        name: 'addSalary',
+    },
+    {
+        type: 'input',
+        message: 'What is the department id (1, 2, 3, 4, or 5)?',
+        name: 'addID',
+    }
+]
+
+roleAdd = (userAnswer) => {
+    console.log(userAnswer);
+    con.connect(function(err) {
+        if (err) throw err;
+        console.log("Connected!");
+        con.query(`INSERT INTO roles (title,salary,department_id) VALUES (?)`,(userAnswer.addNewRole,userAnswer.addSalary,userAnswer.addID),function (err, result) {
+            if (err) throw(err);
+            console.log(result);
+            console.info("Added a table row");
+        });
+      });
+};
+
+// option to use switch in the future instead of if else. makes it shorter
+// future reference - turn into switch! more scalable and readable
 // If user selects this choice, then computer will show data or ask more questions
 function showResults(userChoice) {
     if (userChoice.choices === 'view all departments') {
         console.log('user chose to view all departments');
+        init();
         // add logic to show all departments
     } else if (userChoice.choices === 'view all roles') {
         console.log('user chose to view all roles');
@@ -71,7 +105,7 @@ function showResults(userChoice) {
         inquirer.prompt(addDepartment).then((userAnswer) => departmentAdd(userAnswer));
     } else if (userChoice.choices === 'add a role') {
         console.log('user chose to add a role');
-        // logic to add a role
+        inquirer.prompt(addRole).then((userAnswer) => roleAdd(userAnswer));
     } else if (userChoice.choices === 'add an employee') {
         console.log('user chose to add an employee');
         // logic to add an employee
@@ -79,8 +113,8 @@ function showResults(userChoice) {
         console.log('user chose to update a role');
         // logic to update an employee role
     } else if (userChoice.choices === 'quit') {
-        console.log('user chose to return ot home page');
-        init();
+        console.log('user chose to exit app. Bye!');
+        // logic to close app
     } else {
          console.log('Please chose an answer from the provided choices');
          init();
@@ -90,7 +124,6 @@ function showResults(userChoice) {
 // Initialize app to navigate employee data
 function init() {
   inquirer.prompt(questions).then((userChoice) => {
-    console.info(questions);
     showResults(userChoice);
   });
 }
