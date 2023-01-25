@@ -103,7 +103,7 @@ const addEmployee = [
     },
     {
         type: 'input',
-        message: 'What is the id of the role (1 or 2)?',
+        message: 'What is the id of the manager (null,1 or 2)?',
         name: 'addManagerID',
     }
 ]
@@ -113,7 +113,47 @@ employeeAdd = (userAnswer) => {
     con.connect(function(err) {
         if (err) throw err;
         console.log("Connected!");
-        con.query(`INSERT INTO roles (first_name,last_name,role_id,manager_id) VALUES (?)`,(userAnswer.addFirst,userAnswer.addLast,userAnswer.addRoleID,userAnswer.addManagerID),function (err) {
+        con.query(`INSERT INTO employee (first_name,last_name,role_id,manager_id) VALUES (?)`,(userAnswer.addFirst,userAnswer.addLast,userAnswer.addRoleID,userAnswer.addManagerID),function (err) {
+            console.info("Added a row to the employee table");
+        });
+      });
+};
+
+const updateEmployee = [
+    {
+        type: 'list',
+        // choices: employee.first_name,
+        message: 'What employee would you like to update?',
+        name: 'employeeList',
+    },
+    {
+        type: 'input',
+        message: 'What is the first name of the employee?',
+        name: 'updateFirst',
+    },
+    {
+        type: 'input',
+        message: 'What is the last name of the employee?',
+        name: 'updateLast',
+    },
+    {
+        type: 'input',
+        message: 'What is the updated id of the role (1,2,3,4,5)?',
+        name: 'updateRoleID',
+    },
+    {
+        type: 'input',
+        message: 'What is the updated id of the manager (null, 1 or 2)?',
+        name: 'updateManagerID',
+    }
+]
+
+employeeUpdate = (userAnswer) => {
+    console.log(userAnswer);
+    con.connect(function(err) {
+        if (err) throw err;
+        console.log("Connected!");
+        con.query(`UPDATE employee (role_id,manager_id) VALUES (?)`,(userAnswer.updateRoleID,userAnswer.updateManagerID),function (err) {
             console.info("Added a row to the employee table");
         });
       });
@@ -124,26 +164,38 @@ employeeAdd = (userAnswer) => {
 function showResults(userChoice) {
     if (userChoice.choices === 'view all departments') {
         console.log('user chose to view all departments');
+        con.connect(function(err) {
+            if (err) throw err;
+            con.query(`DESCRIBE department`)});
         init();
-        // add logic to show all departments
     } else if (userChoice.choices === 'view all roles') {
         console.log('user chose to view all roles');
-        // add logic to view all roles
+        con.connect(function(err) {
+            if (err) throw err;
+            con.query(`DESCRIBE roles`)});
+        init();
     } else if (userChoice.choices === 'view all employees') {
         console.log('user chose to view all emplyes');
-        // add logic to view all employees
+        con.connect(function(err) {
+            if (err) throw err;
+            con.query(`DESCRIBE employees`)});
+            init();
     } else if (userChoice.choices === 'add a department') {
         console.log("user chose to add a department");
         inquirer.prompt(addDepartment).then((userAnswer) => departmentAdd(userAnswer));
+        init();
     } else if (userChoice.choices === 'add a role') {
         console.log('user chose to add a role');
         inquirer.prompt(addRole).then((userAnswer) => roleAdd(userAnswer));
+        init();
     } else if (userChoice.choices === 'add an employee') {
         console.log('user chose to add an employee');
         inquirer.prompt(addEmployee).then((userAnswer) => employeeAdd(userAnswer));
+        init();
     } else if (userChoice.choices === 'update an employee role') {
         console.log('user chose to update a role');
-        // logic to update an employee role
+        inquirer.prompt(updateEmployee).then((userAnswer) => employeeUpdate(userAnswer));
+        init();
     } else if (userChoice.choices === 'quit') {
         console.log('user chose to exit app. Bye!');
         // logic to close app
