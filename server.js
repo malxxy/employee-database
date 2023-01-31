@@ -1,28 +1,8 @@
-const inquirer = require('inquirer'); 
-// const inquire = require('./node_modules/inquire');
-const mysql = require('mysql2'); // require sql
-const express = require('express'); // require express
-
-const PORT = process.env.PORT || 3001; // local host
-const app = express(); // launch express app
-
-app.use(express.urlencoded({ extended: false })); // middleware
-app.use(express.json()); // middleware
-
-const con = mysql.createConnection({
-  host: "127.0.0.1",
-  user: "root",
-  password: "codecode123",
-  database: "employees_db"
-});
-  
-app.use((req, res) => {
-res.status(404).end();
-});
-
-app.listen(PORT, () => {
-console.log(`Server running on port ${PORT}`);
-});
+const inquirer = require('inquirer'); // const inquire = require('./node_modules/inquire');
+const { map } = require('rxjs');
+const con = require('./db/connection');
+require('console.table'); // variable console.table into global scope
+// let employeeChoices = [];
 
 // Array of questions for user input
 const questions = [
@@ -44,15 +24,11 @@ const addDepartment = [
 
 departmentAdd = (userAnswer) => {
     console.log(userAnswer);
-    con.connect(function(err) {
-        if (err) throw err;
-        console.log("Connected!");
-        con.query(`INSERT INTO department (name) VALUES (?)`,userAnswer.addDepart,function (err, result) {
-            if (err) throw(err);
-            console.log(result);
-            console.info("Added a table row");
-        });
-      });
+    con.query(`INSERT INTO department (name) VALUES (?)`,userAnswer.addDepart,function (err, result) {
+        if (err) throw(err);
+        console.log(result);
+        console.info("Added a table row");
+    });
 };
 
 const addRole = [
@@ -74,14 +50,10 @@ const addRole = [
 ]
 
 roleAdd = (userAnswer) => {
-    console.log(userAnswer);
-    con.connect(function(err) {
-        if (err) throw err;
-        console.log("Connected!");
+    console.log(userAnswer)
         con.query(`INSERT INTO roles (title,salary,department_id) VALUES (?)`,(userAnswer.addNewRole,userAnswer.addSalary,userAnswer.addID),function (err) {
             console.info("Added a row to the role table");
         });
-      });
 };
 
 // first_name,last_name,role_id,manager_id
@@ -110,31 +82,28 @@ const addEmployee = [
 
 employeeAdd = (userAnswer) => {
     console.log(userAnswer);
-    con.connect(function(err) {
-        if (err) throw err;
-        console.log("Connected!");
         con.query(`INSERT INTO employee (first_name,last_name,role_id,manager_id) VALUES (?)`,(userAnswer.addFirst,userAnswer.addLast,userAnswer.addRoleID,userAnswer.addManagerID),function (err) {
             console.info("Added a row to the employee table");
         });
-      });
 };
+
+const pullEmployeeList = () => {
+    return con.promise().query(`SELECT * FROM employee`).then(function (employeeData) {
+         employeeData[0].map(employee => ({ // map returns an array
+            value:employee.id,
+            name:employee.first_name + " " + employee.last_name,
+        }));
+    });
+};
+
+console.log(pullEmployeeList().then(data=> console.log(data)));
 
 const updateEmployee = [
     {
         type: 'list',
-        // choices: employee.first_name,
+        choices: pullEmployeeList(),
         message: 'What employee would you like to update?',
         name: 'employeeList',
-    },
-    {
-        type: 'input',
-        message: 'What is the first name of the employee?',
-        name: 'updateFirst',
-    },
-    {
-        type: 'input',
-        message: 'What is the last name of the employee?',
-        name: 'updateLast',
     },
     {
         type: 'input',
@@ -150,58 +119,78 @@ const updateEmployee = [
 
 employeeUpdate = (userAnswer) => {
     console.log(userAnswer);
-    con.connect(function(err) {
-        if (err) throw err;
-        console.log("Connected!");
-        con.query(`UPDATE employee (role_id,manager_id) VALUES (?)`,(userAnswer.updateRoleID,userAnswer.updateManagerID),function (err) {
+        con.query(`UPDATE employee (role_id,manager_id) VALUES (?,?)`,(userAnswer.updateRoleID,userAnswer.updateManagerID),function (err) {
             console.info("Added a row to the employee table");
         });
-      });
 };
 
-// option to use switch in the future instead of if else. makes it shorter // future reference - turn into switch! more scalable and readable
+// option to use switch in the future instead of if else. makes it shorter 
+// future reference - turn into switch! more scalable and readable
 // If user selects this choice, then computer will show data or ask more questions
+
+// promises - javascript - i promise to get back to you....
 function showResults(userChoice) {
     if (userChoice.choices === 'view all departments') {
         console.log('user chose to view all departments');
-        con.connect(function(err) {
-            if (err) throw err;
-            con.query(`DESCRIBE department`)});
-        init();
+        con.promise().query(`SELECT * FROM department`).then(function (departmentData) {
+            console.table(departmentData[0]);
+            setTimeout(init,2000);
+        });
     } else if (userChoice.choices === 'view all roles') {
         console.log('user chose to view all roles');
-        con.connect(function(err) {
-            if (err) throw err;
-            con.query(`DESCRIBE roles`)});
-        init();
+        con.promise().query(`SELECT * FROM roles`).then(function (roleData) {
+            console.table(roleData[0]);
+            setTimeout(init,2000);
+        });
     } else if (userChoice.choices === 'view all employees') {
         console.log('user chose to view all emplyes');
-        con.connect(function(err) {
-            if (err) throw err;
-            con.query(`DESCRIBE employees`)});
-            init();
+        con.promise().query(`SELECT * FROM employee`).then(function (employeeData) {
+            console.table(employeeData[0]);
+            setTimeout(init,2000);
+        });
     } else if (userChoice.choices === 'add a department') {
         console.log("user chose to add a department");
-        inquirer.prompt(addDepartment).then((userAnswer) => departmentAdd(userAnswer));
-        init();
+        inquirer.prompt(addDepartment).then((userAnswer) => {
+            departmentAdd(userAnswer);
+            con.promise().query(`SELECT * FROM department`).then(function (departmentData) {
+                console.table(departmentData[0]);
+                setTimeout(init,2000);
+            });
+        });
     } else if (userChoice.choices === 'add a role') {
         console.log('user chose to add a role');
-        inquirer.prompt(addRole).then((userAnswer) => roleAdd(userAnswer));
-        init();
+        inquirer.prompt(addRole).then((userAnswer) => {
+            roleAdd(userAnswer);
+            con.promise().query(`SELECT * FROM role`).then(function (roleData) {
+                console.table(roleData[0]);
+                setTimeout(init,2000);
+            });
+        });
     } else if (userChoice.choices === 'add an employee') {
         console.log('user chose to add an employee');
-        inquirer.prompt(addEmployee).then((userAnswer) => employeeAdd(userAnswer));
-        init();
+        inquirer.prompt(addEmployee).then((userAnswer) => {
+            employeeAdd(userAnswer);
+            con.promise().query(`SELECT * FROM role`).then(function (roleData) {
+                console.table(roleData[0]);
+                setTimeout(init,2000);
+            });
+        });
     } else if (userChoice.choices === 'update an employee role') {
         console.log('user chose to update a role');
-        inquirer.prompt(updateEmployee).then((userAnswer) => employeeUpdate(userAnswer));
-        init();
+        // function to pull employee list
+        inquirer.prompt(updateEmployee).then((userAnswer) => {
+            employeeUpdate(userAnswer);
+            con.promise().query(`SELECT * FROM employee`).then(function (employeeData) {
+                console.table(employeeData[0]);
+                setTimeout(init,2000);
+            });
+    });
     } else if (userChoice.choices === 'quit') {
         console.log('user chose to exit app. Bye!');
         // logic to close app
     } else {
          console.log('Please chose an answer from the provided choices');
-         init();
+         setTimeout(init,2000);
         };
     };
 
