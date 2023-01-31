@@ -187,7 +187,7 @@ function showResults(userChoice) {
     });
     } else if (userChoice.choices === 'quit') {
         console.log('user chose to exit app. Bye!');
-        // logic to close app
+        setTimeout(process.exit(),2000)
     } else {
          console.log('Please chose an answer from the provided choices');
          setTimeout(init,2000);
