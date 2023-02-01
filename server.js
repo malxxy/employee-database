@@ -88,15 +88,15 @@ employeeAdd = (userAnswer) => {
 };
 
 const pullEmployeeList = () => {
-    return con.promise().query(`SELECT * FROM employee`).then(function (employeeData) {
+     return con.promise().query(`SELECT * FROM employee`).then(function (employeeData) {
          employeeData[0].map(employee => ({ // map returns an array
             value:employee.id,
-            name:employee.first_name + " " + employee.last_name,
+            empName:employee.first_name + " " + employee.last_name,
         }));
     });
 };
 
-console.log(pullEmployeeList().then(data=> console.log(data)));
+console.log(pullEmployeeList()) //.then(data=> console.log(data)));
 
 const updateEmployee = [
     {
@@ -161,7 +161,7 @@ function showResults(userChoice) {
         console.log('user chose to add a role');
         inquirer.prompt(addRole).then((userAnswer) => {
             roleAdd(userAnswer);
-            con.promise().query(`SELECT * FROM role`).then(function (roleData) {
+            con.promise().query(`SELECT * FROM roles`).then(function (roleData) {
                 console.table(roleData[0]);
                 setTimeout(init,2000);
             });
