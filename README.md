@@ -1,6 +1,3 @@
-
-  ![](https://img.shields.io/badge/LICENSE-MIT-blue)
-  <br>
 # Employee Database Navigation with MySQL
 <br>
 Navigate through a mock employee database where you can view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role using Node js and MySQL.
@@ -27,7 +24,7 @@ Navigate through a mock employee database where you can view all departments, vi
   <br>
   
   ## License
-  This is a project under the MIT license.
+ N/A
   <br>
   
   ## Contributing
