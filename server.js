@@ -1,8 +1,7 @@
 const inquirer = require('inquirer'); // const inquire = require('./node_modules/inquire');
 const { map } = require('rxjs');
-const con = require('./db/connection');
+const con = require('./db/connection'); // require connection
 require('console.table'); // variable console.table into global scope
-// let employeeChoices = [];
 
 // Array of questions for user input
 const questions = [
@@ -87,51 +86,6 @@ employeeAdd = (userAnswer) => {
         });
 };
 
-// // const pullEmployeeList = () => {
-//      const employeeList = con.promise().query(`SELECT * FROM employee`).then(function (employeeData) {
-//          employeeData[0].map(employee => ({ // map returns an array
-//             value:employee.id,
-//             empName:employee.first_name + " " + employee.last_name,
-//         }));
-    // });
-
-// console.log(pullEmployeeList()) //.then(data=> console.log(data)));
-
-const updateEmployee = [
-
-    {
-        type: 'list',
-        choices: 'name',
-        message: 'What employee would you like to update?',
-        name: 'employeeList',
-    },
-    {
-        type: 'input',
-        message: 'What is the updated id of the role (1,2,3,4,5)?',
-        name: 'updateRoleID',
-    },
-    {
-        type: 'input',
-        message: 'What is the updated id of the manager (null, 1 or 2)?',
-        name: 'updateManagerID',
-    }
-]
-
-// employeeUpdate = (userAnswer) => {
-//     con.promise().query(`SELECT * FROM employee`).then(function (employeeData) {
-//         console.table(employeeData[0])
-//     });
-//     .then()
-//         con.query(`UPDATE employee (role_id,manager_id) VALUES (?,?)`,(userAnswer.updateRoleID,userAnswer.updateManagerID),function (err) {
-//             console.info("Added a row to the employee table");
-//         });
-// };
-
-// option to use switch in the future instead of if else. makes it shorter 
-// future reference - turn into switch! more scalable and readable
-// If user selects this choice, then computer will show data or ask more questions
-
-// promises - javascript - i promise to get back to you....
 function showResults(userChoice) {
     if (userChoice.choices === 'view all departments') {
         console.log('user chose to view all departments');
@@ -180,21 +134,53 @@ function showResults(userChoice) {
         });
     } else if (userChoice.choices === 'update an employee role') {
         console.log('user chose to update a role');
-        // // function to pull employee list
-        // inquirer.prompt(updateEmployee).then((userAnswer) => {
-        //     employeeUpdate(userAnswer);
-        const sql = `SELECT * FROM employee ORDER BY last_name`;   
-        con.query(sql, (err, res) => {
-            if (err) throw err
-            const employee = res.map(({ id, first_name, last_name }) => ({
-                value: id,
-                name: `${first_name} ${last_name}`,
-            }));
-            inquirer.prompt(updateEmployee).then((userAnswer) => {
-                employeeUpdate(userAnswer);
-        setTimeout(init,2000);
-        });    
-    });
+        function updateRole(){
+            const sql = `SELECT * FROM employee ORDER BY last_name`;
+            con.query(sql, (err, res) => {
+                if (err) throw err
+                const employee = res.map(({ id, first_name, last_name }) => ({
+                 value: id,
+                 name: `${first_name} ${last_name}`,
+               }));
+                     return inquirer.prompt([
+                     {
+                         name: 'title',
+                         type: 'rawlist',
+                         message: 'select employee to update their role',
+                         choices: employee,
+                     },
+                 ]).then(answers => {
+                     const sql = `SELECT * FROM roles`;
+                     con.query(sql, (err, res) => {
+                         if (err) throw err
+                             const role = res.map(({ id, title, salary }) => ({
+                             value: id,
+                             title: `${title}`,
+                             salary: `${salary}`,
+                             name: `${title}`,
+                         }));
+                         return inquirer.prompt([
+                             {
+                             type: 'rawlist',
+                             name: 'role',
+                             message: 'select role',
+                             choices: role,
+                             }
+                         ]).then(ans =>{
+                                 const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+                                 const params = [ans.role, answers.title]
+                                 // console.log(answers.title)
+                                 // console.log(ans.role)
+                                 con.query(sql, params, (err, res) => {
+                                   if (err) throw err;
+                                   init();
+                                 });
+                         });
+                     });
+                 });
+             }
+         )};
+         updateRole();
     } else if (userChoice.choices === 'quit') {
         console.log('user chose to exit app. Bye!');
         setTimeout(process.exit(),2000)
@@ -203,7 +189,7 @@ function showResults(userChoice) {
          setTimeout(init,2000);
         };
     };
-
+ 
 // Initialize app to navigate employee data
 function init() {
   inquirer.prompt(questions).then((userChoice) => {
