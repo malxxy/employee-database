@@ -87,21 +87,21 @@ employeeAdd = (userAnswer) => {
         });
 };
 
-const pullEmployeeList = () => {
-     return con.promise().query(`SELECT * FROM employee`).then(function (employeeData) {
-         employeeData[0].map(employee => ({ // map returns an array
-            value:employee.id,
-            empName:employee.first_name + " " + employee.last_name,
-        }));
-    });
-};
+// // const pullEmployeeList = () => {
+//      const employeeList = con.promise().query(`SELECT * FROM employee`).then(function (employeeData) {
+//          employeeData[0].map(employee => ({ // map returns an array
+//             value:employee.id,
+//             empName:employee.first_name + " " + employee.last_name,
+//         }));
+    // });
 
-console.log(pullEmployeeList()) //.then(data=> console.log(data)));
+// console.log(pullEmployeeList()) //.then(data=> console.log(data)));
 
 const updateEmployee = [
+
     {
         type: 'list',
-        choices: pullEmployeeList(),
+        choices: 'name',
         message: 'What employee would you like to update?',
         name: 'employeeList',
     },
@@ -117,12 +117,15 @@ const updateEmployee = [
     }
 ]
 
-employeeUpdate = (userAnswer) => {
-    console.log(userAnswer);
-        con.query(`UPDATE employee (role_id,manager_id) VALUES (?,?)`,(userAnswer.updateRoleID,userAnswer.updateManagerID),function (err) {
-            console.info("Added a row to the employee table");
-        });
-};
+// employeeUpdate = (userAnswer) => {
+//     con.promise().query(`SELECT * FROM employee`).then(function (employeeData) {
+//         console.table(employeeData[0])
+//     });
+//     .then()
+//         con.query(`UPDATE employee (role_id,manager_id) VALUES (?,?)`,(userAnswer.updateRoleID,userAnswer.updateManagerID),function (err) {
+//             console.info("Added a row to the employee table");
+//         });
+// };
 
 // option to use switch in the future instead of if else. makes it shorter 
 // future reference - turn into switch! more scalable and readable
@@ -143,7 +146,7 @@ function showResults(userChoice) {
             setTimeout(init,2000);
         });
     } else if (userChoice.choices === 'view all employees') {
-        console.log('user chose to view all emplyes');
+        console.log('user chose to view all employes');
         con.promise().query(`SELECT * FROM employee`).then(function (employeeData) {
             console.table(employeeData[0]);
             setTimeout(init,2000);
@@ -177,13 +180,20 @@ function showResults(userChoice) {
         });
     } else if (userChoice.choices === 'update an employee role') {
         console.log('user chose to update a role');
-        // function to pull employee list
-        inquirer.prompt(updateEmployee).then((userAnswer) => {
-            employeeUpdate(userAnswer);
-            con.promise().query(`SELECT * FROM employee`).then(function (employeeData) {
-                console.table(employeeData[0]);
-                setTimeout(init,2000);
-            });
+        // // function to pull employee list
+        // inquirer.prompt(updateEmployee).then((userAnswer) => {
+        //     employeeUpdate(userAnswer);
+        const sql = `SELECT * FROM employee ORDER BY last_name`;   
+        con.query(sql, (err, res) => {
+            if (err) throw err
+            const employee = res.map(({ id, first_name, last_name }) => ({
+                value: id,
+                name: `${first_name} ${last_name}`,
+            }));
+            inquirer.prompt(updateEmployee).then((userAnswer) => {
+                employeeUpdate(userAnswer);
+        setTimeout(init,2000);
+        });    
     });
     } else if (userChoice.choices === 'quit') {
         console.log('user chose to exit app. Bye!');
