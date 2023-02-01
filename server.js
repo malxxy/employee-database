@@ -50,7 +50,11 @@ const addRole = [
 
 roleAdd = (userAnswer) => {
     console.log(userAnswer)
-        con.query(`INSERT INTO roles (title,salary,department_id) VALUES (?)`,(userAnswer.addNewRole,userAnswer.addSalary,userAnswer.addID),function (err) {
+        const insertRole = `INSERT INTO roles (title,salary,department_id) VALUES (?,?,?)`;
+        const userInput = [userAnswer.addNewRole,userAnswer.addSalary,userAnswer.addID];
+        con.query(insertRole,userInput,function (err) {
+            if (err) { throw err;
+            }
             console.info("Added a row to the role table");
         });
 };
@@ -81,7 +85,9 @@ const addEmployee = [
 
 employeeAdd = (userAnswer) => {
     console.log(userAnswer);
-        con.query(`INSERT INTO employee (first_name,last_name,role_id,manager_id) VALUES (?)`,(userAnswer.addFirst,userAnswer.addLast,userAnswer.addRoleID,userAnswer.addManagerID),function (err) {
+    const employeeSQL = `INSERT INTO employee (first_name,last_name,role_id,manager_id) VALUES (?,?,?,?)`;
+    const employeeAns = [userAnswer.addFirst,userAnswer.addLast,userAnswer.addRoleID,userAnswer.addManagerID];
+        con.query(employeeSQL,employeeAns,function (err) {
             console.info("Added a row to the employee table");
         });
 };
@@ -91,19 +97,19 @@ function showResults(userChoice) {
         console.log('user chose to view all departments');
         con.promise().query(`SELECT * FROM department`).then(function (departmentData) {
             console.table(departmentData[0]);
-            setTimeout(init,2000);
+            setTimeout(init,1800);
         });
     } else if (userChoice.choices === 'view all roles') {
         console.log('user chose to view all roles');
         con.promise().query(`SELECT * FROM roles`).then(function (roleData) {
             console.table(roleData[0]);
-            setTimeout(init,2000);
+            setTimeout(init,1800);
         });
     } else if (userChoice.choices === 'view all employees') {
         console.log('user chose to view all employes');
         con.promise().query(`SELECT * FROM employee`).then(function (employeeData) {
             console.table(employeeData[0]);
-            setTimeout(init,2000);
+            setTimeout(init,1900);
         });
     } else if (userChoice.choices === 'add a department') {
         console.log("user chose to add a department");
@@ -111,7 +117,7 @@ function showResults(userChoice) {
             departmentAdd(userAnswer);
             con.promise().query(`SELECT * FROM department`).then(function (departmentData) {
                 console.table(departmentData[0]);
-                setTimeout(init,2000);
+                setTimeout(init,1800);
             });
         });
     } else if (userChoice.choices === 'add a role') {
@@ -127,9 +133,9 @@ function showResults(userChoice) {
         console.log('user chose to add an employee');
         inquirer.prompt(addEmployee).then((userAnswer) => {
             employeeAdd(userAnswer);
-            con.promise().query(`SELECT * FROM role`).then(function (roleData) {
-                console.table(roleData[0]);
-                setTimeout(init,2000);
+            con.promise().query(`SELECT * FROM employee`).then(function (employeeData) {
+                console.table(employeeData[0]);
+                setTimeout(init,1800);
             });
         });
     } else if (userChoice.choices === 'update an employee role') {
@@ -183,10 +189,10 @@ function showResults(userChoice) {
          updateRole();
     } else if (userChoice.choices === 'quit') {
         console.log('user chose to exit app. Bye!');
-        setTimeout(process.exit(),2000)
+        setTimeout(process.exit(),1800)
     } else {
          console.log('Please chose an answer from the provided choices');
-         setTimeout(init,2000);
+         setTimeout(init,1500);
         };
     };
  
