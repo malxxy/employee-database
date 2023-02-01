@@ -27,8 +27,6 @@ Navigate through a mock employee database where you can view all departments, vi
   <br>
   [![Employee Database Walkthrough](demo/videoScreenshot.png)](https://drive.google.com/file/d/11BSi6KSTYtjIMowOZQAY1N_NKC7xxn4U/view) 
   <br>
-  Demo on [GitHub](https://github.com/malxxy/employee-database/blob/main/demo/employeeDatabaseWalkthrough.mp4) 
-
   
   ## License
  N/A
