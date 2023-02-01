@@ -22,10 +22,12 @@ Navigate through a mock employee database where you can view all departments, vi
   ## Usage
   Run "SOURCE schema.sql, "SOURCE seeds.sql" and SOURCE "query.sql" after installing inqiurer. Then run node server to launch the application.
   <br>
-  DEMO. Click on the image to view the video.
+  ### Demo
+  Click on the image to view the video.
   <br>
-  [![Employee Database Walkthrough]({demo/videoScreenshot.png})]({https://drive.google.com/file/d/11BSi6KSTYtjIMowOZQAY1N_NKC7xxn4U/view} "Link to Google Drive Video")
-  Demo Video in GitHub: 
+  [![Employee Database Walkthrough](demo/videoScreenshot.png)](demo/employeeDatabaseWalkthrough.mp4) 
+  <br>
+  Demo on [GitHub](https://github.com/malxxy/employee-database/blob/main/demo/employeeDatabaseWalkthrough.mp4) 
 
   
   ## License
